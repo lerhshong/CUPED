@@ -1,0 +1,712 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 1cm
+\topmargin 1cm
+\rightmargin 1cm
+\bottommargin 1cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CUPED (Controlled-experiment Using Pre-Experiment Data)
+\end_layout
+
+\begin_layout Standard
+Focus on the case of the two-sample t-test.
+ Suppose interested in some metric 
+\begin_inset Formula $Y$
+\end_inset
+
+ , e.g.
+ Queries per user.
+ To apply the t-test, we assume the observed values of the metric for users
+ in the treatment and control are independent realizations of random variables
+ 
+\begin_inset Formula $Y^{(t)}$
+\end_inset
+
+ and 
+\begin_inset Formula $Y^{(c)}$
+\end_inset
+
+ .
+ How we think about this - there are two buckets/urns/deck-of-cards and
+ you're pulling samples out from both.
+ Then you apply a t-test based on the test statistic
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{equation}
+\frac{\overline{Y}^{(t)}-\overline{Y}^{c)}}{\sqrt{var(\overline{Y}^{(t)}-\overline{Y}^{(c)})}}
+\end{equation}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $\Delta=\overline{Y}^{(t)}-\overline{Y}^{(c)}$
+\end_inset
+
+ is an unbiased estimator for the shift of the mean and the t-statistic
+ is a normalized version of that estimator.
+ Typically, 
+\begin_inset Formula $n$
+\end_inset
+
+ will be large here so the normality assumption is not required by the CLT.
+\end_layout
+
+\begin_layout Standard
+We assume the samples are independent, so we have
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+var(\Delta)=var(\overline{Y}^{(t)}-\overline{Y}^{(c)})=var(\overline{Y}^{(t)})+var(\overline{Y}^{(c)})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this framework, the key to variance reduction in the difference is reducing
+ the variance of the means themselves.
+ To do so, compute a corrected estimate of the delta 
+\begin_inset Formula $\Delta^{*}$
+\end_inset
+
+ that
+\end_layout
+
+\begin_layout Itemize
+is still an unbiasd estimator for the shift in the means, 
+\begin_inset Formula $E(\Delta^{*})=\Delta$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+has smaller variance, 
+\begin_inset Formula $var(\Delta^{*})<var(\Delta)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Because of the smaller variance, the test statistic 
+\begin_inset Formula $(1)$
+\end_inset
+
+ would be larger for the same expected effect size.
+ Hence - improved sensitivity.
+\end_layout
+
+\begin_layout Subsection*
+Sensitivity of a test
+\end_layout
+
+\begin_layout Standard
+Take a slight detour.
+ Sensitivity here is the same as power - how good the experiment is at detecting
+ an effect, or equivalently the probability of rejecting 
+\begin_inset Formula $H_{0}$
+\end_inset
+
+ when the alternative is true.
+\end_layout
+
+\begin_layout Standard
+Suppose we consider a one-sided test case where we're guessing 
+\begin_inset Formula $H_{A}:\mu_{D}=\theta>0$
+\end_inset
+
+.
+ Then we have that the power is:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+B(\theta) & = & Pr(T_{n}>Z_{0.95}|\mu_{D}=\theta)\\
+ & \approx & Pr(\frac{\overline{D}_{n}-0}{\sigma/\sqrt{n}}>1.64|\mu_{D}=\theta)\\
+ & = & Pr(\frac{\overline{D}_{n}-\theta}{\sigma/\sqrt{n}}>1.64-\frac{\theta}{\sigma/\sqrt{n}}|\mu_{D}=\theta)\\
+ & = & 1-Pr(\frac{\overline{D}_{n}-\theta}{\sigma/\sqrt{n}}<1.64-\frac{\theta}{\sigma/\sqrt{n}}|\mu_{D}=\theta)\\
+ & = & 1-\Phi(1.64-\frac{\theta}{\sigma/\sqrt{n}}|\mu_{D}=\theta)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Put in some numbers to sanity check this.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $n=0:\Phi=0.95,B(\theta)=0.05$
+\end_inset
+
+ - if you have no data points at all, the chance of you concluding there's
+ an effect is the same as the significance level of the test.
+ (Think about the test statistic and what it means)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $n\uparrow:\Phi\downarrow\implies B(\theta)\uparrow$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The more data points you have, the more powerful your test.
+ But the power only grows with the square root of 
+\begin_inset Formula $n$
+\end_inset
+
+!
+\end_layout
+
+\begin_layout Subsection*
+Variance Reduction
+\end_layout
+
+\begin_layout Standard
+Come from two angles - stratified sampling and control variates.
+\end_layout
+
+\begin_layout Subsubsection*
+Stratified sampling
+\end_layout
+
+\begin_layout Standard
+Divide the sampling region into several strata, sample from each stratum
+ and then combine the results from each stratum to get an overall estimate.
+ This estimate usually has a smaller variance than the estimator without
+ stratification.
+\end_layout
+
+\begin_layout Standard
+Mathematically speaking: Originally we want to estimate 
+\begin_inset Formula $E(Y).$
+\end_inset
+
+ The standard Monte Carlo approach is to simulate 
+\begin_inset Formula $Y_{1},Y_{2},Y_{3},....Y_{n}$
+\end_inset
+
+ and calculate the sample average 
+\begin_inset Formula $\overline{Y}$
+\end_inset
+
+.
+ Then 
+\begin_inset Formula $\overline{Y}$
+\end_inset
+
+ is an unbiased estimator of 
+\begin_inset Formula $E(Y)$
+\end_inset
+
+ and the variance is 
+\begin_inset Formula $Var(\overline{Y})=\frac{Var(Y)}{n}$
+\end_inset
+
+ .
+\end_layout
+
+\begin_layout Standard
+Thus originally: Use 
+\begin_inset Formula $\overline{Y}$
+\end_inset
+
+ with variance 
+\begin_inset Formula $\frac{Var(Y)}{n}$
+\end_inset
+
+ .
+\end_layout
+
+\begin_layout Standard
+What about stratified? Assume we can divide the sampling region of 
+\begin_inset Formula $Y$
+\end_inset
+
+ into 
+\begin_inset Formula $K$
+\end_inset
+
+ subregions with 
+\begin_inset Formula $w_{k}$
+\end_inset
+
+ the probability that 
+\begin_inset Formula $Y$
+\end_inset
+
+ falls into the 
+\begin_inset Formula $k$
+\end_inset
+
+th stratum, 
+\begin_inset Formula $k=1,2,...K$
+\end_inset
+
+ .
+ If we fix the number of points sampled from the 
+\begin_inset Formula $k$
+\end_inset
+
+th stratum to be 
+\begin_inset Formula $n_{k}=n\cdot w_{k}$
+\end_inset
+
+ .
+ Define the 
+\emph on
+stratified average
+\emph default
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\hat{Y}_{strat}=\sum_{k=1}^{K}w_{k}\overline{Y}_{k}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $\overline{Y}_{k}$
+\end_inset
+
+ is the average within the 
+\begin_inset Formula $k$
+\end_inset
+
+th stratum.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\hat{Y}_{strat}$
+\end_inset
+
+ is an unbiased estimator, it has the same expected value as 
+\begin_inset Formula $\bar{Y}$
+\end_inset
+
+ :
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+E(\hat{Y}_{strat}) & = & E(\sum_{k=1}^{K}w_{k}\overline{Y}_{k})\\
+ & = & \sum_{k=1}^{K}w_{k}E(\bar{Y}_{k})\\
+ & = & \sum_{k=1}^{K}\frac{n_{k}}{n}E(\bar{Y}_{k})\\
+ & = & \sum_{k=1}^{K}\frac{n_{k}}{n}(\frac{\sum_{i\in k}y_{i}}{n_{k}})\\
+ & = & \sum_{k=1}^{K}\sum_{i\in k}\frac{y_{i}}{n}\\
+ & = & \sum_{n}\frac{y_{i}}{n}\\
+ & = & E(\bar{Y})
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+But it has a reduced variance.
+ The intuition is, 
+\begin_inset Formula $Var(\bar{Y})$
+\end_inset
+
+ can be decomposed into within-strata variance and between-strata variance.
+ The latter is removed through stratification.
+ E.g, variance of children's height is large but if you stratify by age,
+ get a much smaller variance within each group.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+var(\bar{Y}) & = & \sum_{k=1}^{K}\frac{w_{k}}{n}\sigma_{k}^{2}+\sum_{k=1}^{K}\frac{w_{k}}{n}(\mu_{k}-\mu)^{2}\\
+ & \geq & \sum_{k=1}^{K}\frac{w_{k}}{n}\sigma_{k}^{2}=var(\hat{Y}_{strat})
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We'll prove 
+\begin_inset Formula $(3)$
+\end_inset
+
+.
+ 
+\begin_inset Formula $(2)$
+\end_inset
+
+ will unfortunately need to be taken on faith.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+var(\hat{Y}_{strat}) & = & var(\sum_{k=1}^{K}w_{k}\bar{Y}_{k})\\
+ & = & \sum_{k=1}^{K}var(w_{k}\bar{Y}_{k})\\
+ & = & w_{k}^{2}\sum_{k=1}^{K}var(\bar{Y}_{k})\\
+ & = & w_{k}^{2}\sum_{k=1}^{K}var(\frac{\sum_{i\in k}y_{i}}{n_{k}})\\
+ & = & \frac{w_{k}^{2}}{n_{k}}\sum_{k=1}^{K}\sigma_{k}^{2}\\
+ & = & \frac{w_{k}}{n}\sum_{k=1}^{K}\sigma_{k}^{2}\\
+ &  & \;\qquad\qquad\qquad\qquad\Square
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Example of stratification - If 
+\begin_inset Formula $Y_{i}$
+\end_inset
+
+ is the number of queries from a user 
+\begin_inset Formula $i$
+\end_inset
+
+ , a covariate 
+\begin_inset Formula $X_{i}$
+\end_inset
+
+ could be the browser the user used before the experiment started.
+ The estimator 
+\begin_inset Formula $\Delta_{strat}=\hat{Y}_{strat}^{(t)}-\hat{Y}_{strat}^{(c)}=\sum_{k=1}^{K}w_{k}(\bar{Y}_{k}^{(t)}-\bar{Y}_{k}^{(c)})$
+\end_inset
+
+ enjoys variance reduction.
+\end_layout
+
+\begin_layout Subsubsection*
+Control variates
+\end_layout
+
+\begin_layout Standard
+The other angle to reduce variance.
+ Suppose we can simulate another random variable 
+\begin_inset Formula $X$
+\end_inset
+
+ in addition to 
+\begin_inset Formula $Y$
+\end_inset
+
+ with known expectation 
+\begin_inset Formula $E(X)$
+\end_inset
+
+.
+ That is, we have 
+\emph on
+independent
+\emph default
+ pairs of 
+\begin_inset Formula $(Y_{i},X_{i}),i=1,...,n$
+\end_inset
+
+.
+ Define
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\hat{Y}_{cv}=\bar{Y}-\theta\bar{X}+\theta E(X)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $\theta$
+\end_inset
+
+ is any constant.
+ This is an unbiased estimator of 
+\begin_inset Formula $E(Y)$
+\end_inset
+
+, and it has variance
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+var(\hat{Y}_{cv}) & = & var(\bar{Y}-\theta\bar{X})\\
+ & = & var(\frac{\sum y}{n}-\frac{\theta}{n}\sum x)\\
+ & = & \frac{1}{n^{2}}var(\sum y-\theta\sum x)\\
+ & = & \frac{1}{n^{2}}var(\sum(y-\theta x))\\
+ & = & \frac{1}{n}var(Y-\theta X)\\
+ & = & \frac{1}{n}\{var(Y)+\theta^{2}var(X)-2\theta cov(Y,X)\}\\
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By differentiating with respect to 
+\begin_inset Formula $\theta$
+\end_inset
+
+, one can find the choice of 
+\begin_inset Formula $\theta$
+\end_inset
+
+ that minimizes this variance:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\theta^{*}=\frac{cov(Y,X)}{var(X)}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+And with this optimal 
+\begin_inset Formula $\theta^{*}$
+\end_inset
+
+ , we have
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+var(\hat{Y}_{cv}) & = & \frac{1}{n}\{var(Y)+\theta^{2}var(X)-2\theta cov(Y,X)\}\\
+ & = & \frac{1}{n}\{var(Y)+\frac{cov^{2}}{var(X)}-2\frac{cov^{2}}{var(X)}\}\\
+ & = & \frac{1}{n}\{var(Y)-\frac{cov^{2}}{var(X)var(Y)}var(Y)\}\\
+ & = & \frac{var(Y)}{n}\{1-\rho^{2}\}\\
+ & = & var(\bar{Y})(1-\rho^{2})
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So the variance is reduced by a factor of 
+\begin_inset Formula $\rho^{2}$
+\end_inset
+
+.
+ The task becomes, find a covariate 
+\begin_inset Formula $X$
+\end_inset
+
+ that is highly correlated with the metric of interest 
+\begin_inset Formula $Y$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+In general it isn't easy to find control variate 
+\begin_inset Formula $X$
+\end_inset
+
+ with known 
+\begin_inset Formula $E(X)^{(t)}$
+\end_inset
+
+ and known 
+\begin_inset Formula $E(X)^{(c)}$
+\end_inset
+
+.
+ A key observation is that 
+\begin_inset Formula $E(X)^{(t)}-E(X)^{(c)}=0$
+\end_inset
+
+ in the pre-experiment period because there is no treatment effect introduced
+ yet.
+ By using only information from before the launch of the experiment to construct
+ the control variate, the randomization between treatment and control ensures
+ that we have 
+\begin_inset Formula $EX^{(t)}=EX^{(c)}$
+\end_inset
+
+.
+ But that means that 
+\begin_inset Formula $\Delta_{cv}=\hat{Y}_{cv}^{(t)}-\hat{Y}_{cv}^{(c)}$
+\end_inset
+
+ is an unbiased estimator of 
+\begin_inset Formula $\delta=E(\Delta)$
+\end_inset
+
+ (Slight subtlety here - also means that 
+\begin_inset Formula $\theta$
+\end_inset
+
+ has to be the same for both test and control.
+ The solution is to estimate 
+\begin_inset Formula $\theta$
+\end_inset
+
+ with pooled test and control, i.e.
+ before experiment - but then if you choose the exact same variable, that's
+ as good as saying 
+\begin_inset Formula $\theta=1$
+\end_inset
+
+ (?)).
+ Similarly, we see the variance is reduced as well:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+var(\Delta_{cv}) & = & var(\hat{Y}_{cv}^{(t)}-\hat{Y}_{cv}^{(c)})\\
+ & = & var(\hat{Y}_{cv}^{(t)})+var(\hat{Y}_{t}^{(c)})\\
+ & = & var(\bar{Y}^{(t)})(1-\rho^{2})+var(\bar{Y}^{(c)})(1-\rho^{2})\\
+ & = & var(\bar{Y}^{(t)}-\bar{Y}^{(c)})(1-\rho^{2})\\
+ & = & var(\Delta)(1-\rho^{2})
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Thus far we have described two approaches, 
+\emph on
+control variates 
+\emph default
+and 
+\emph on
+stratified sampling
+\emph default
+.
+ They both lead to variance reduction, and turns out are actually connected
+ mathematically - one can think of the 
+\emph on
+control variates 
+\emph default
+approach as a generalization of 
+\emph on
+stratified sampling
+\emph default
+, that can handle both categorical and numerical covariates.
+\end_layout
+
+\begin_layout Standard
+But what should we use as covariates? Turns out, just use the same variable!
+\end_layout
+
+\end_body
+\end_document
